@@ -7,6 +7,11 @@ from store.models import Product
 
 
 def say_hello(request):
-    queryset = Product.objects.filter(inventory=F('unit_price'))
+    queryset = Product.objects.filter(unit_price__range=(
+        0, 15), inventory__range=(10, 30)).order_by('unit_price', '-title').reverse()
 
-    return render(request, 'hello.html', {"name": "Vaibhav", "products": list(queryset)})
+    first_product = queryset[0]
+    last_product = list(queryset)[-1]
+
+    return render(request, 'hello.html', {"name": "Vaibhav", "products": list(queryset),
+                                          "first_product": first_product, "last_product": last_product})
