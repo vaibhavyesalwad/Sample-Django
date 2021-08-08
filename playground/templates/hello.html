@@ -11,7 +11,16 @@
       {% endfor %}
     </ul>
 
-    <p>{{first_product.title}} {{first_product.unit_price}}</p>
-    <p>{{last_product.title}} {{last_product.unit_price}}</p>
+    <ul>
+      {% for product in first_five_products %}
+      <li>{{product.title}}</li>
+      {% endfor %}
+    </ul>
+
+    <ul>
+      {% for product in second_five_products %}
+      <li>{{product.title}}</li>
+      {% endfor %}
+    </ul>
   </body>
 </html>

@@ -10,8 +10,8 @@ def say_hello(request):
     queryset = Product.objects.filter(unit_price__range=(
         0, 15), inventory__range=(10, 30)).order_by('unit_price', '-title').reverse()
 
-    first_product = queryset[0]
-    last_product = list(queryset)[-1]
+    first_five_products = queryset[:5]
+    second_five_products = queryset[5:10]
 
     return render(request, 'hello.html', {"name": "Vaibhav", "products": list(queryset),
-                                          "first_product": first_product, "last_product": last_product})
+                                          "first_five_products": first_five_products, "second_five_products": second_five_products})
