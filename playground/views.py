@@ -7,7 +7,10 @@ from store.models import OrderItem, Product
 
 
 def say_hello(request):
-    products = Product.objects.filter(
-        pk__in=OrderItem.objects.values('product')).values('title').order_by('title')
+    products = Product.objects.defer('title')
+    # print(products)
+
+    # products = Product.objects.only('id')
+    print(products)
 
     return render(request, 'hello.html', {"name": "Vaibhav", "products": list(products)})
