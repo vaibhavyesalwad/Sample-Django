@@ -11,10 +11,6 @@ from store.models import CartItem, Customer, Order, OrderItem, Product
 
 
 def say_hello(request):
-    query_set = Customer.objects.annotate(full_name=Func(
-        F('first_name'), Value(' '), F('last_name'), function='CONCAT'))
-
-    # query_set = Customer.objects.annotate(
-    #     full_name=Concat('first_name', Value(' '), 'last_name'))
+    query_set = Customer.objects.annotate(orders_count=Count('order'))
 
     return render(request, 'hello.html', {"name": "Vaibhav", "query_set": list(query_set)})
