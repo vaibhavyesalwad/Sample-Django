@@ -5,11 +5,7 @@
     {% else %}
     <h1>Hello World</h1>
     {% endif %}
-    <ul>
-      {% for order in orders %}
-      <li>{{order.id}} $ {{order.placed_at}} $ {{order.customer.id}} {{order.customer.first_name}} </li>
-      {% endfor %}
-    </ul>
+    {{result}}
 
     
     </ul>
