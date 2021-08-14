@@ -3,23 +3,24 @@ from django.db.models.expressions import ExpressionWrapper, Func
 from django.db.models.fields import DecimalField
 from django.shortcuts import render
 from store.models import Collection, Order, OrderItem, Product
-from django.db import transaction
+from django.db import transaction, connection
 
 # Create your views here.
 
 
 def say_hello(request):
 
-    with transaction.atomic():
-        order = Order()
-        order.customer_id = 1
-        order.save()
+    # Implementation 1
+    queryset = Product.objects.raw('SELECT * FROM store_product')
 
-        item = OrderItem()
-        item.order = order
-        item.product_id = 1
-        item.quantity = 1
-        item.unit_price = 10
-        item.save()
+    # Implementation 2
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM store_product')
+    cursor.close()
 
-    return render(request, 'hello.html', {"name": "Vaibhav"})
+    # Implementation 3
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT * FROM store_product')
+        # cursor.callproc       # for calling stored procedure
+
+    return render(request, 'hello.html', {"name": "Vaibhav", "result": list(queryset)})
