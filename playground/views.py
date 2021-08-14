@@ -2,18 +2,21 @@ from django.db.models.aggregates import Count, Max, Min
 from django.db.models.expressions import ExpressionWrapper, Func
 from django.db.models.fields import DecimalField
 from django.shortcuts import render
-from django.db.models import Q, F, Value, Func, ExpressionWrapper
-from django.db.models.functions import Concat
-from django.db.models.aggregates import Min, Max, Sum, Count, Avg
-from store.models import CartItem, Customer, Order, OrderItem, Product
+from django.contrib.contenttypes.models import ContentType
+from store.models import Product
+from tags.models import TaggedItem
 
 
 # Create your views here.
 
 
 def say_hello(request):
-    discounted_price = ExpressionWrapper(
-        F('unit_price')*0.8, output_field=DecimalField())
-    query_set = Product.objects.annotate(discounted_price=discounted_price)
+    content_type = ContentType.objects.get_for_model(Product)
 
-    return render(request, 'hello.html', {"name": "Vaibhav", "query_set": list(query_set)})
+    # finding tags for product with id = 1
+    query_set = TaggedItem.objects.select_related('tag').filter(
+        content_type=content_type,
+        object_id=1
+    )
+
+    return render(request, 'hello.html', {"name": "Vaibhav", "result": list(query_set)})
