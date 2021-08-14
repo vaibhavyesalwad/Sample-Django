@@ -11,16 +11,13 @@ from tags.models import TaggedItem
 
 
 def say_hello(request):
+    # Make sure to select primary key to delete
 
-    # Make sure to select primary key to update
     # Implementation 1
-    # WE have to read row first and then update using traditional way to retain earlier values in row
-    # collection = Collection.objects.get(pk=11)
-    # collection.featured_product = None
-    # collection.save()
+    # collection = Collection(pk=12)
+    # collection.delete()
 
     # Implementation 2
-    # Only intended values will be changed
-    Collection.objects.filter(pk=11).update(featured_product=None)
+    Collection.objects.filter(pk=12).delete()
 
     return render(request, 'hello.html', {"name": "Vaibhav"})
