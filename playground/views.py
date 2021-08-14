@@ -2,22 +2,24 @@ from django.db.models.aggregates import Count, Max, Min
 from django.db.models.expressions import ExpressionWrapper, Func
 from django.db.models.fields import DecimalField
 from django.shortcuts import render
-from django.contrib.contenttypes.models import ContentType
-from store.models import Collection, Product
-from tags.models import TaggedItem
-
+from store.models import Collection, Order, OrderItem, Product
+from django.db import transaction
 
 # Create your views here.
 
 
 def say_hello(request):
-    # Make sure to select primary key to delete
 
-    # Implementation 1
-    # collection = Collection(pk=12)
-    # collection.delete()
+    with transaction.atomic():
+        order = Order()
+        order.customer_id = 1
+        order.save()
 
-    # Implementation 2
-    Collection.objects.filter(pk=12).delete()
+        item = OrderItem()
+        item.order = order
+        item.product_id = 1
+        item.quantity = 1
+        item.unit_price = 10
+        item.save()
 
     return render(request, 'hello.html', {"name": "Vaibhav"})
