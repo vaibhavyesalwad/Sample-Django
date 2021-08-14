@@ -11,6 +11,14 @@ from tags.models import TaggedItem
 
 
 def say_hello(request):
-    query_set = TaggedItem.objects.get_tags_for(Product, 1)
+    query_set = Product.objects.all()
 
+    # query is cached only if evaluate whole queryset
+    query_set[0]        # Now 2 queries 1. first row
+    list(query_set)     # 2. all rows
+
+    # list(query_set)      # Now only one query all rows
+    # query_set[0]         # first row from cached queryset
+
+    # reads already cached queryset
     return render(request, 'hello.html', {"name": "Vaibhav", "result": list(query_set)})
