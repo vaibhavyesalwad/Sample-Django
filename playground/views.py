@@ -11,9 +11,16 @@ from tags.models import TaggedItem
 
 
 def say_hello(request):
-    collection = Collection()
-    collection.title = 'Video Games'
-    collection.featured_product = Product(pk=1)
-    collection.save()
+
+    # Make sure to select primary key to update
+    # Implementation 1
+    # WE have to read row first and then update using traditional way to retain earlier values in row
+    # collection = Collection.objects.get(pk=11)
+    # collection.featured_product = None
+    # collection.save()
+
+    # Implementation 2
+    # Only intended values will be changed
+    Collection.objects.filter(pk=11).update(featured_product=None)
 
     return render(request, 'hello.html', {"name": "Vaibhav"})
