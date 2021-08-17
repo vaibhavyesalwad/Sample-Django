@@ -11,16 +11,20 @@ from django.db import transaction, connection
 def say_hello(request):
 
     # Implementation 1
-    queryset = Product.objects.raw('SELECT * FROM store_product')
+    # queryset = Product.objects.raw('SELECT * FROM store_product')
 
     # Implementation 2
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM store_product')
-    cursor.close()
+    # cursor = connection.cursor()
+    # queryset = cursor.execute('SELECT * FROM store_product')
+    # cursor.close()
 
     # Implementation 3
     with connection.cursor() as cursor:
-        cursor.execute('SELECT * FROM store_product')
-        # cursor.callproc       # for calling stored procedure
+        # queryset = cursor.execute("SELECT * FROM sql_invoicing.invoices")
+        # for calling stored procedure
+        queryset = cursor.callproc('sql_invoicing.make_payment', [
+                                   2, 150, '2019-01-01'])
 
-    return render(request, 'hello.html', {"name": "Vaibhav", "result": list(queryset)})
+    print(queryset, type(queryset))
+
+    return render(request, 'hello.html', {"name": "Vaibhav", "result": queryset})
