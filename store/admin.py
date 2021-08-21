@@ -1,11 +1,28 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 from django.db.models.aggregates import Count
+from django.db.models.query import QuerySet
 from django.utils.html import format_html, urlencode
 from django.urls import reverse
 from . import models
 
 # Register your models here.
+
+
+class InventoryFilter(admin.SimpleListFilter):
+    title = 'inventory'
+    parameter_name = 'inventory'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('<10', 'Low'), ('>=10', 'OK')
+        ]
+
+    def queryset(self, request, queryset: QuerySet):
+        if self.value() == '<10':
+            return queryset.filter(inventory__lt=10)
+        elif self.value() == '>=10':
+            return queryset.filter(inventory__gte=10)
 
 
 @admin.register(models.Collection)
@@ -35,6 +52,7 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ['title']
     list_per_page = 20
     list_select_related = ['collection']
+    list_filter = ['collection', 'last_update', InventoryFilter]
 
     def collection_title(self, product):
         return product.collection.title
@@ -54,6 +72,7 @@ class CustomerAdmin(admin.ModelAdmin):
     list_per_page = 20
     search_fields = ['first_name__istartswith', 'last_name__istartswith']
 
+    @admin.display(ordering='orders_count')
     def orders_count(self, customer):
         url = (reverse('admin:store_order_changelist')
                + '?'
