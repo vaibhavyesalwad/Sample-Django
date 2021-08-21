@@ -1,6 +1,8 @@
+from tags.models import TaggedItem
 from django.contrib import admin
 from django.contrib.admin.decorators import action
 from django.contrib.admin.options import ModelAdmin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.core.checks import messages
 from django.db.models.aggregates import Count
 from django.db.models.query import QuerySet
@@ -48,10 +50,16 @@ class CollectionAdmin(admin.ModelAdmin):
         )
 
 
+class TagInline(GenericTabularInline):
+    model = TaggedItem
+    autocomplete_fields = ['tag']
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory']
     autocomplete_fields = ['collection']
+    inlines = [TagInline]
     list_display = ['title', 'unit_price',
                     'inventory_status', 'collection_title']
     list_editable = ['unit_price']
@@ -105,11 +113,11 @@ class CustomerAdmin(admin.ModelAdmin):
 
 
 class OrderItemInline(admin.TabularInline):
+    model = models.OrderItem
     autocomplete_fields = ['product']
     extra = 1
     max_num = 10
     min_num = 1
-    model = models.OrderItem
 
 
 @admin.register(models.Order)
